@@ -21,7 +21,9 @@ module top_tb(
 	reg rst;
 	reg enable;
 	reg direction;
-	wire [7:0]counter_out
+	reg err;
+	reg [7:0]counter_out2;
+	wire [7:0]counter_out;
 
 //Todo: Clock generation
 	initial
@@ -32,16 +34,48 @@ module top_tb(
      	end
 
 //Todo: User logic
-	initial begin
+	initial 
+	begin
 	clk = 0;
 	rst = 0;
-	enable = 1;
+	enable = 0;
 	direction = 0;
+	err = 0;
 	counter_out = 0;
-		forever begin
+	counter_out2 = counter_out;
+		forever 
+		begin
 		#CLK_PERIOD
 		
-    
+		if (enable==0&&rst==0&&(counter_out!=counter_out2)) 
+		begin
+		$display("***Test Failed*** counting when enable = 0")
+		err=1;
+		end
+
+		if (rst==1&&counter_out!=0)
+		begin
+	 	$display("***Test Failed*** didn't reset properly")
+           	err=1;
+		end
+
+		if (rst==0&&enable==1&&clk==1&&direction==1&&(counter_out2!=counter_out-1)) 
+		begin
+	 	$display("***Test Failed*** does not count up properly")
+	 	err=1;
+		end
+	 
+		if (rst==0&enable==1&&clk==1&&direction==0&&(counter_out2!=counter_out+1))  
+		begin
+	 	$display("***Test Failed*** does not count down properly") 
+	 	err=1;
+		end
+		
+		counter_out2 = counter_out;
+		end
+	end
+
+     
 //Todo: Finish test, check for success
 	initial 
 	begin
@@ -53,6 +87,12 @@ module top_tb(
 
 //Todo: Instantiate counter module
 	counter top (
+	.clk (clk),
+  	.rst (rst),
+  	.enable (enable),
+  	.direction (direction),
+  	.counter_out (counter_out)
+  	);
 
  
 endmodule 
