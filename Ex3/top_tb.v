@@ -21,7 +21,7 @@ module top_tb(
 	reg rst;
 	reg enable;
 	reg direction;
-	reg [7:0]counter_out
+	wire [7:0]counter_out
 
 //Todo: Clock generation
 	initial
@@ -32,9 +32,27 @@ module top_tb(
      	end
 
 //Todo: User logic
+	initial begin
+	clk = 0;
+	rst = 0;
+	enable = 1;
+	direction = 0;
+	counter_out = 0;
+		forever begin
+		#CLK_PERIOD
+		
     
 //Todo: Finish test, check for success
+	initial 
+	begin
+        #50 
+        if (err==0)
+          $display("***TEST PASSED! :) ***");
+        $finish;
+      	end
 
 //Todo: Instantiate counter module
+	counter top (
+
  
 endmodule 
