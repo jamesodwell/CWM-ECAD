@@ -37,6 +37,13 @@ module top_tb(
 	#(CLK_PERIOD) rst = 0;
 	end
 
+	initial begin
+	  button = 0;
+	  #CLK_PERIOD button = 1;
+	  #(9*CLK_PERIOD) button = 0; 
+	  #(2*CLK_PERIOD) button = 1;
+	end
+
 //Todo: User logic
 	initial 
 	begin
@@ -47,15 +54,29 @@ module top_tb(
 		#CLK_PERIOD
 		
 		if (rst==1)
-			if (throw!=3'b000) begin
+			if (throw!=3'b001) begin
 	 		$display("***Test Failed*** didn't reset properly");
            		err=1;
 			end
-		else 	
-		
+		else if ( (throw!=3'b000)||(throw!=3'b111) ) begin
+	        if ((button==0)&&(throw2!=throw)) begin
+		  $display("***Test Failed*** Throw changed when button is 0");
+	    	  err=1;
+	       	end
+	      	end
 
-		
+	      	if ((button==1)&&(throw2==throw)) begin
+	        $display("***Test Failed*** Throw doesn't change when button is 1");
+		err=1;
+	      	end
+	    
+	      	if ((button==1)&&(throw2==3'b001)&&(throw!=3'b010)) begin
+		$display("***Test Failed*** Throw doesn't move in correct sequence");
+		err=1;
+	      	end 
+		end	
 	end
+
 //Finish test, check for success
     initial begin
 	#200

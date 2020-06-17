@@ -20,9 +20,9 @@
 
 module dice(input clk, rst, button, output reg [2:0] throw);
 
-always @ (*) begin
+always @ (posedge clk) begin
 	if (rst)
-	throw<=3'b000;
+	throw<=3'b001;
 	else begin
 		if (button) begin
 	        case (throw)
